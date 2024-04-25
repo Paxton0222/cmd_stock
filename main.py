@@ -1,5 +1,5 @@
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import twstock
 import time
 import os
@@ -42,14 +42,12 @@ def get_real_time_stock_data(code: str | List[str]) -> dict:  # 盤中即時報�
 def display(data: str | List[dict], delay: int) -> None:
     while True:
         try:
-            result = "====================================\n\n"
-            result += f"""最後更新時間: {str(datetime.now())[:19]}\n\n"""
+            result = f"""最後更新時間: {str(datetime.now(timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))}\n\n"""
             stock_data = get_real_time_stock_data(data)
             for i in range(len(stock_data)):
                 s = stock_data[i]
                 result += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
                 result += "\n"
-            result += "\n===================================="
             os.system("clear")
             print(result, end="\r")
             time.sleep(delay)
