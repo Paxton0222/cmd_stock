@@ -41,7 +41,7 @@ def get_real_time_stock_data(code: str | List[str]) -> dict:  # 盤中即時報�
 
 
 def loading(keep: int, speed: int = 0.2):
-    loading = ["|", "/", "-", "\\", "|", "/", "-"]
+    loading = ["|", "/", "-", "\\"]
 
     while keep > 0:
         for i in range(len(loading)):
