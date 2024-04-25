@@ -59,18 +59,24 @@ def display(data: str | List[dict], delay: int) -> None:
         try:
             th = threading.Thread(target=loading, args=(delay,))
             th.start()
+
+            # 更新主要資料
             result_time = f"""最後更新時間: {str(datetime.now(
                 timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))}\n\n"""
             stock_data = get_real_time_stock_data(data)
             result_data = ""
-            th.join()
             for s in stock_data:
                 result_data += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
                 result_data += "\n"
             result_data += "\n"
+
+            th.join()  # loading done
+
+            # 刷新頁面
             os.system("clear")
             print(result_time, end="\r")
             print(result_data, end="\r")
+
             loading(0.2)
         except KeyboardInterrupt:
             break
