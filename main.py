@@ -1,5 +1,6 @@
 from typing import List
 from datetime import datetime, timezone, timedelta
+import threading
 import twstock
 import time
 import os
@@ -39,23 +40,53 @@ def get_real_time_stock_data(code: str | List[str]) -> dict:  # 盤中即時報�
         return [transform_data(data) for data in multiple_data_to_list(stock)]
 
 
+def loading(keep: int, speed: int = 0.2):
+    loading = ["|", "/", "-", "\\", "|", "/", "-"]
+
+    while keep > 0:
+        for i in range(len(loading)):
+            print(
+                f"""現在時間: {str(datetime.now(
+                timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))} {loading[i]}""",
+                end="\r",
+            )
+            time.sleep(0.2)
+            keep -= speed
+
+
 def display(data: str | List[dict], delay: int) -> None:
     while True:
         try:
-            result = f"""最後更新時間: {str(datetime.now(timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))}\n\n"""
+            th = threading.Thread(target=loading, args=(delay,))
+            th.start()
+            result_time = f"""最後更新時間: {str(datetime.now(
+                timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))}\n\n"""
             stock_data = get_real_time_stock_data(data)
-            for i in range(len(stock_data)):
-                s = stock_data[i]
-                result += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
-                result += "\n"
+            result_data = ""
+            th.join()
+            for s in stock_data:
+                result_data += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
+                result_data += "\n"
+            result_data += "\n"
             os.system("clear")
-            print(result, end="\r")
-            time.sleep(delay)
+            print(result_time, end="\r")
+            print(result_data, end="\r")
+            loading(0.2)
         except KeyboardInterrupt:
             break
 
 
 if __name__ == "__main__":
     display(
-        ["0050", "006208", "00631L", "00687B", "00937B", "00940", "2330", "2317"], 5
+        [
+            "0050",
+            "006208",
+            "00631L",
+            "00687B",
+            "00937B",
+            "00940",
+            "2330",
+            "2317",
+        ],
+        5,
     )
