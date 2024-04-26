@@ -1,9 +1,19 @@
+import json
 from typing import List
 from datetime import datetime, timezone, timedelta
 import threading
+import requests
 import twstock
 import time
 import os
+
+
+def get_index_data():  # 取得台股指數報價
+    index_url = "https://mis.twse.com.tw/stock/data/mis_ohlc_TSE.txt"
+    futures_index_url = "https://mis.twse.com.tw/stock/data/futures_side.txt"
+    index_req = json.loads(requests.get(index_url).text)
+    futures_index_req = json.loads(requests.get(futures_index_url).text)
+    return {"index": index_req, "futures_index": futures_index_req}
 
 
 def get_real_time_stock_data(code: str | List[str]) -> dict:  # 盤中即時報價
@@ -61,10 +71,18 @@ def display(data: str | List[dict], delay: int) -> None:
             th.start()
 
             # 更新主要資料
+            stock_data = get_real_time_stock_data(data)
+            index_data = get_index_data()
+
             result_time = f"""最後更新時間: {str(datetime.now(
                 timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))}\n\n"""
-            stock_data = get_real_time_stock_data(data)
             result_data = ""
+
+            index_info = index_data["index"]["infoArray"][0]
+            result_data += f"""台股加權\n現價: {index_info["z"]}\n昨收: {index_info["y"]}\n盤中最高:{index_info["h"]}\n盤中最低:{index_info["l"]}\n\n"""
+            futures_index_info = index_data["futures_index"]["msgArray"][0]
+            result_data += f"""{futures_index_info["n"]}\n現價: {futures_index_info["z"]}\n昨收: {futures_index_info["y"]}\n盤中最高: {futures_index_info["h"]}\n盤中最低: {futures_index_info["l"]}\n\n"""  # 台指期
+
             for s in stock_data:
                 result_data += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
                 result_data += "\n"
