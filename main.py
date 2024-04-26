@@ -78,10 +78,13 @@ def display(data: str | List[dict], delay: int) -> None:
                 timezone(timedelta(hours=+8))).strftime("%Y/%m/%d %H:%M:%S"))}\n\n"""
             result_data = ""
 
+            # 加權數據
             index_info = index_data["index"]["infoArray"][0]
             result_data += f"""台股加權\n現價: {index_info["z"]}\n昨收: {index_info["y"]}\n盤中最高:{index_info["h"]}\n盤中最低:{index_info["l"]}\n\n"""
             futures_index_info = index_data["futures_index"]["msgArray"][0]
             result_data += f"""{futures_index_info["n"]}\n現價: {futures_index_info["z"]}\n昨收: {futures_index_info["y"]}\n盤中最高: {futures_index_info["h"]}\n盤中最低: {futures_index_info["l"]}\n\n"""  # 台指期
+
+            result_data += f"""期現價差: {round(float(futures_index_info["z"]) - float(index_info["z"]),2)}\n\n"""
 
             for s in stock_data:
                 result_data += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
