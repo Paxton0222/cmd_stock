@@ -87,7 +87,9 @@ def display(data: str | List[dict], delay: int) -> None:
             result_data += f"""期現價差: {round(float(futures_index_info["z"]) - float(index_info["z"]),2)}\n\n"""
 
             for s in stock_data:
-                result_data += f"""{s["code"]} {s["name"]} {s["price"]["now"]}"""
+                result_data += (
+                    f"""{s["code"]} {s["name"]} {round(float(s["price"]["now"]),2)}"""
+                )
                 result_data += "\n"
             result_data += "\n"
 
