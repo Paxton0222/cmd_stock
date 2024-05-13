@@ -4,9 +4,12 @@ from datetime import datetime, timezone, timedelta
 from stock.real_time import stock, index
 import threading
 import requests
+import warnings
 import twstock
 import time
 import os
+
+warnings.filterwarnings("ignore")
 
 
 def loading(keep: int, speed: int = 0.2):

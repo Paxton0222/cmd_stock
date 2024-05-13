@@ -1,8 +1,8 @@
 certifi==2024.2.2
 charset-normalizer==3.3.2
 idna==3.7
-lxml==5.2.1
+lxml==5.2.2
 requests==2.31.0
--e git+https://github.com/Paxton0222/stock.git@b8c09098d7233839b0198a30fde1d29524999e2c#egg=stock
-twstock==1.3.1
+stock @ git+https://github.com/Paxton0222/stock.git@fcf243fe4bea158faff84d1fcd714535b92ddac9
+twstock @ git+https://github.com/Paxton0222/twstock.git@2df7900185dbd35c344dc71e2d03c25eaafce049
 urllib3==2.2.1
